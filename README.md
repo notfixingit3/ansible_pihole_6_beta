@@ -4,7 +4,9 @@
 For easy testing, on a blank system, one without pihole already installed
 
 ## WARNING
-DO NOT USE ON PRODUCTION SYSTEM UNLESS YOU KNOW WHAT YOUR DOING
+DO NOT USE ON PRODUCTION SYSTEM UNLESS YOU KNOW WHAT YOUR DOING  
+
+Only supporting Debian and Ubuntu for now  
 
 ## Install
 * Update hosts file and change IP to your host
