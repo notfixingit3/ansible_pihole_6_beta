@@ -1,8 +1,10 @@
-# Install PiHole Beta 6 on a fresh bare metal system / VM
-
+# Install PiHole 6 Beta on a fresh bare metal system / VM
 
 ## Why?
-For easy testing
+For easy testing, on a blank system, one without pihole already installed
+
+## WARNING
+DO NOT USE ON PRODUCTION SYSTEM UNLESS YOU KNOW WHAT YOUR DOING
 
 ## Install
 * Update hosts file and change IP to your host
