@@ -1,0 +1,39 @@
+---
+- name: Upgrade PiHole to v6
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Stop lighttpd
+      ansible.builtin.systemd:
+        name: lighttpd
+        state: stopped
+
+    - name: Copy ftlbranch file
+      ansible.builtin.copy:
+        src: ../../templates/ftlbranch
+        dest: /etc/pihole/ftlbranch
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Checkout core v6
+      ansible.builtin.expect:
+        command: pihole checkout core development-v6
+        responses:
+          '[y/N]': y
+
+    - name: Checkout web v6
+      ansible.builtin.expect:
+        command: pihole checkout web development-v6
+        responses:
+          '[y/N]': y
+
+    - name: Set pihole to single mode instead of local only
+      ansible.builtin.lineinfile:
+        path: /etc/pihole/pihole.toml
+        search_string: listeningMode = "LOCAL"
+        line: listeningMode = "SINGLE"
+
+    - name: Restart PiHole DNS
+      ansible.builtin.command: pihole restartdns

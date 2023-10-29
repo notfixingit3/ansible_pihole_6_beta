@@ -1,0 +1,5 @@
+[all:vars]
+#ansible_user=someusername
+
+[pihole]
+10.10.10.193 hostname=somehostname

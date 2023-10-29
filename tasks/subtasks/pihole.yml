@@ -1,0 +1,62 @@
+---
+- name: Install PiHole
+  hosts: all
+  vars_files:
+    - "../../vars/vars.yml"
+  become: true
+
+  tasks:
+    - name: Download PiHole install script
+      ansible.builtin.get_url:
+        url: https://install.pi-hole.net
+        dest: /tmp/basic-install.sh
+
+    - name: Check if systemd-resolved config file exists
+      stat:
+        path: /etc/systemd/resolved.conf
+      register: systemd_resolve
+
+    - name: Turn off systemd-resolved stub
+      lineinfile:
+        path: /etc/systemd/resolved.conf
+        regex: '^DNSStubListener='
+        line: 'DNSStubListener=no'
+      when: systemd_resolve.stat.exists == True
+
+    - name: Restart resolved on Debian/Ubuntu
+      service:
+        name: systemd-resolved
+        state: restarted
+      when: systemd_resolve.stat.exists == True
+
+    - name: Create PiHole Dir
+      ansible.builtin.file:
+        path: /etc/pihole
+        state: directory
+        mode: '0755'
+
+    - name: Copy over setup template
+      ansible.builtin.template:
+        src: ../../templates/setupVars.conf.j2
+        dest: /etc/pihole/setupVars.conf
+        owner: root
+        group: root
+        mode: u=wr,g=r,o=r
+
+    - name: Install PiHole on Debian/Ubuntu
+      ansible.builtin.command: 'bash /tmp/basic-install.sh --unattended /dev/stdin'
+      when: >
+        ansible_selinux.status == "disabled" and
+        ansible_distribution in ["Debian", "Ubuntu"]
+
+    - name: Remove Pihole installer file
+      ansible.builtin.file:
+        path: /tmp/basic-install.sh
+        state: absent
+
+    - name: set pihole web password on Debian/Ubuntu
+      ansible.builtin.shell: |
+        pihole -a -p "{{ PI_WEBPASSWORD }}"
+      when: >
+        "PI_WEBPASSWORD != None" and
+        ansible_distribution in ["Debian", "Ubuntu"]

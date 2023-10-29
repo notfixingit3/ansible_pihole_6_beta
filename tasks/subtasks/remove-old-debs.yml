@@ -1,0 +1,25 @@
+---
+- name: Remove old Deb Requirements
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Remove old debs
+      ansible.builtin.apt:
+        name:
+          - lighttpd
+          - php-cgi
+          - php-common
+          - php-intl
+          - php-json
+          - php-sqlite3
+          - php-xml
+          - php8.1-cgi
+          - php8.1-cli
+          - php8.1-common
+          - php8.1-intl
+          - php8.1-opcache
+          - php8.1-readline
+          - php8.1-sqlite3
+          - php8.1-xml
+        state: absent

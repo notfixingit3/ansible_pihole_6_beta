@@ -1,0 +1,21 @@
+---
+- name: Install PiHole 6 Beta
+  hosts: all
+  gather_facts: true
+# Tasks file for PiHole 6 Beta
+
+
+- import_playbook: subtasks/pihole.yml
+  when: >
+    ansible_distribution not in ["Debian", "Ubuntu"] and
+    ansible_distribution_version not in ["10", "11", "12", "16.04", "18.04", "22.04"]
+
+- import_playbook: subtasks/upgradeto6.yml
+  when: >
+    ansible_distribution not in ["Ubuntu] and
+    ansible_distribution_version not in ["10", "11", "12", "16.04", "18.04", "22.04"]
+
+- import_playbook: subtasks/remove-old-debs.yml
+  when: >
+    ansible_distribution not in ["Ubuntu] and
+    ansible_distribution_version not in ["10", "11", "12", "16.04", "18.04", "22.04"]
